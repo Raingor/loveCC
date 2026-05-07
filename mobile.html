@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>我们的纪念日 ❤️ CC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: '微软雅黑', '宋体', sans-serif;
+            background: #ffe;
+            color: #231F20;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        audio {
+            display: none;
+        }
+        
+        /* 顶部计时器 */
+        .header {
+            text-align: center;
+            padding: 30px 20px 20px;
+            background: linear-gradient(to bottom, #fff 0%, #ffe 100%);
+        }
+        .header-title {
+            font-size: 20px;
+            color: #E53935;
+            margin-bottom: 10px;
+        }
+        .header-subtitle {
+            font-size: 14px;
+            color: #33CC00;
+            margin-bottom: 5px;
+        }
+        .clock {
+            font-size: 24px;
+            color: #333;
+        }
+        .clock .digit {
+            font-size: 32px;
+            font-weight: bold;
+        }
+        .clock-line2 {
+            display: block;
+            margin-top: 5px;
+        }
+        
+        /* 文字内容 */
+        .content {
+            flex: 1;
+            padding: 20px;
+            font-size: 16px;
+            line-height: 2;
+            overflow-y: auto;
+        }
+        .say {
+            color: #FF0000;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .signature {
+            text-align: right;
+            margin-top: 30px;
+            color: #666;
+        }
+        
+        /* 底部爱心树 */
+        .canvas-container {
+            width: 100%;
+            padding: 10px;
+            background: #ffe;
+            flex-shrink: 0;
+        }
+        #canvas {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        /* 入口提示 */
+        .tap-hint {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            animation: pulse 2s infinite;
+            z-index: 100;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <audio autoplay="autoplay">
+        <source src="love.mp3" type="audio/mp3"/>
+    </audio>
+    
+    <!-- 顶部计时器 -->
+    <div class="header">
+        <div class="header-title">我们的纪念日 ❤️</div>
+        <div class="header-subtitle">挚爱的CC，我爱你</div>
+        <div class="header-subtitle">我们走过了……</div>
+        <div class="clock" id="clock"></div>
+    </div>
+    
+    <!-- 文字内容 -->
+    <div class="content">
+        <span class="say">致我爱的CC，我爱你，我好希望可以一直一直陪着你</span>
+        <span class="say"></span>
+        <span class="say">那个三月，二狗App的随机匹配让我们相遇</span>
+        <span class="say">她带着好奇而来，我抱着忐忑再试</span>
+        <span class="say">两个平行世界就这样悄然交汇，命运的齿轮悄然转动</span>
+        <span class="say"></span>
+        <span class="say">2026年4月11日，我们确认了关系，正式成为男女朋友</span>
+        <span class="say"></span>
+        <span class="say">虽然我们相隔两地，但系我地坚信一定会幸福甘行这一辈子的路</span>
+        <span class="say">我能和CC共晴天共风雨，无论晴天霹雳，还是风里雨里，我都会在你身边</span>
+        <span class="say"></span>
+        <span class="say">喜欢你，喜欢你，喜欢你，爱你CC！</span>
+        <span class="say"></span>
+        <span class="signature">-- 爱你的叶荣 --</span>
+    </div>
+    
+    <!-- 底部爱心树 -->
+    <div class="canvas-container">
+        <canvas id="canvas" width="350" height="400"></canvas>
+    </div>
+    
+    <div class="tap-hint">👆 点击爱心树开始动画</div>
+
+    <script src="./renxi/jquery.min.js"></script>
+    <script src="./renxi/jscex.min.js"></script>
+    <script src="./renxi/jscex-parser.js"></script>
+    <script src="./renxi/jscex-jit.js"></script>
+    <script src="./renxi/jscex-builderbase.min.js"></script>
+    <script src="./renxi/jscex-async.min.js"></script>
+    <script src="./renxi/jscex-async-powerpack.min.js"></script>
+    <script src="./renxi/functions.js" charset="utf-8"></script>
+    <script src="./renxi/love.js" charset="utf-8"></script>
+    
+    <script>
+    $(function() {
+        // 初始化倒计时
+        var together = new Date();
+        together.setFullYear(2026, 3, 11);
+        together.setHours(8);
+        together.setMinutes(0);
+        together.setSeconds(0);
+        together.setMilliseconds(2);
+        
+        function mobileTimeElapse(date) {
+            var current = Date();
+            var seconds = (Date.parse(current) - Date.parse(date)) / 1000;
+            var days = Math.floor(seconds / (3600 * 24));
+            seconds = seconds % (3600 * 24);
+            var hours = Math.floor(seconds / 3600);
+            if (hours < 10) hours = "0" + hours;
+            seconds = seconds % 3600;
+            var minutes = Math.floor(seconds / 60);
+            if (minutes < 10) minutes = "0" + minutes;
+            seconds = Math.floor(seconds % 60);
+            if (seconds < 10) seconds = "0" + seconds;
+            var result = "<span class=\"digit\">" + days + "</span> 天<br><span class=\"clock-line2\"><span class=\"digit\">" + hours + "</span> 小时 <span class=\"digit\">" + minutes + "</span> 分钟 <span class=\"digit\">" + seconds + "</span> 秒</span>";
+            $("#clock").html(result);
+        }
+        mobileTimeElapse(together);
+        
+        var canvas = $('#canvas');
+        var width = canvas.width();
+        var height = canvas.height();
+        canvas.attr("width", width);
+        canvas.attr("height", height);
+
+        var opts = {
+            seed: {
+                x: width / 2 - 20,
+                color: "rgb(190, 26, 37)",
+                scale: 1.2
+            },
+            branch: [
+                [175, 400, 190, 150, 160, 120, 20, 60, [
+                    [180, 300, 140, 250, 110, 240, 8, 60, [
+                        [145, 260, 135, 255, 120, 235, 2, 25]
+                    ]],
+                    [195, 270, 230, 210, 265, 205, 8, 60, [
+                        [220, 235, 250, 240, 258, 250, 2, 50]
+                    ]],
+                    [178, 170, 176, 145, 172, 120, 2, 25],
+                    [185, 240, 130, 145, 90, 140, 6, 50, [
+                        [140, 170, 125, 155, 110, 120, 2, 25],
+                        [165, 205, 145, 185, 130, 195, 2, 35]
+                    ]],
+                    [185, 215, 215, 145, 245, 120, 4, 60, [
+                        [210, 170, 235, 160, 238, 155, 2, 50]
+                    ]]
+                ]]
+            ],
+            bloom: {
+                num: 300,
+                width: 330,
+                height: 380,
+            },
+            footer: {
+                width: 350,
+                height: 2,
+                speed: 6,
+            }
+        };
+
+        var tree = new Tree(canvas[0], width, height, opts);
+        var seed = tree.seed;
+        var foot = tree.footer;
+        var hold = 1;
+        var started = false;
+
+        canvas.on('click', function(e) {
+            if (!started) {
+                started = true;
+                $('.tap-hint').fadeOut();
+                runAnimation();
+                return;
+            }
+            var offset = canvas.offset(), x, y;
+            x = e.pageX - offset.left;
+            y = e.pageY - offset.top;
+            if (seed.hover(x, y)) {
+                hold = 0;
+                canvas.off('click mousemove');
+                canvas.removeClass('hand');
+            }
+        }).on('mousemove', function(e) {
+            var offset = canvas.offset(), x, y;
+            x = e.pageX - offset.left;
+            y = e.pageY - offset.top;
+            canvas.toggleClass('hand', seed.hover(x, y));
+        });
+
+        function runAnimation() {
+            var seedAnimate = eval(Jscex.compile("async", function () {
+                seed.draw();
+                while (hold) { $await(Jscex.Async.sleep(10)); }
+                while (seed.canScale()) { seed.scale(0.95); $await(Jscex.Async.sleep(10)); }
+                while (seed.canMove()) { seed.move(0, 2); foot.draw(); $await(Jscex.Async.sleep(10)); }
+            }));
+
+            var growAnimate = eval(Jscex.compile("async", function () {
+                do { tree.grow(); $await(Jscex.Async.sleep(10)); } while (tree.canGrow());
+            }));
+
+            var flowAnimate = eval(Jscex.compile("async", function () {
+                do { tree.flower(2); $await(Jscex.Async.sleep(10)); } while (tree.canFlower());
+            }));
+
+            var moveAnimate = eval(Jscex.compile("async", function () {
+                tree.snapshot("p1", 240, 0, 610, 680);
+                while (tree.move("p1", 500, 0)) { foot.draw(); $await(Jscex.Async.sleep(10)); }
+                foot.draw();
+                tree.snapshot("p2", 500, 0, 610, 680);
+                canvas.parent().css("background", "url(" + tree.toDataURL('image/png') + ")");
+                canvas.css("background", "#ffe");
+                $await(Jscex.Async.sleep(300));
+                canvas.css("background", "none");
+            }));
+
+            var jumpAnimate = eval(Jscex.compile("async", function () {
+                while (true) {
+                    tree.ctx.clearRect(0, 0, width, height);
+                    tree.jump();
+                    foot.draw();
+                    $await(Jscex.Async.sleep(25));
+                }
+            }));
+
+            var textAnimate = eval(Jscex.compile("async", function () {
+                while (true) {
+                    mobileTimeElapse(together);
+                    $await(Jscex.Async.sleep(1000));
+                }
+            }));
+
+            var runAsync = eval(Jscex.compile("async", function () {
+                $await(seedAnimate());
+                $await(growAnimate());
+                $await(flowAnimate());
+                textAnimate().start();
+                $await(jumpAnimate());
+            }));
+
+            runAsync().start();
+        }
+    });
+    </script>
+</body>
+</html>

@@ -42,6 +42,11 @@
 </head>
 
 <body>
+<script>
+if (window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    window.location.href = 'mobile.html';
+}
+</script>
 
 <audio id="bgm" autoplay="autopaly">
 
